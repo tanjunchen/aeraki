@@ -1,0 +1,19 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: springboot-demoservice
+  annotations:
+    interface: org.apache.dubbo.springboot.demo.DemoService
+spec:
+  hosts:
+  - org.apache.dubbo.springboot.demo.demoservice
+  ports:
+  - number: 20880
+    name: tcp-dubbo
+    protocol: TCP
+  workloadSelector:
+    labels:
+      app: provider-demo
+  location: MESH_EXTERNAL
+  resolution: DNS
+
