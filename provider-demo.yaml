@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: provider-demo-deployment-v1
+  labels:
+    app: provider-demo
+    name: provider-demo
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: provider-demo
+      version: v1
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/bootstrapOverride: aeraki-bootstrap-config
+        sidecar.istio.io/proxyImage: 'aeraki/meta-protocol-proxy-debug:1.1.3'
+      labels:
+        app: provider-demo
+        version: v1
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: provider-demo
+          image: registry.baidubce.com/bms/dubbo-spring-boot-demo-provider:dev
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 20880

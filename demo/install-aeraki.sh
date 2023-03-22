@@ -17,7 +17,6 @@
 BASEDIR=$(dirname "$0")/..
 
 SCRIPTS_DIR=$BASEDIR/test/e2e/scripts
-COMMON_DIR=$BASEDIR/test/e2e/common
 
 if [ -z "$AERAKI_TAG" ]; then
   export AERAKI_TAG=1.2.1

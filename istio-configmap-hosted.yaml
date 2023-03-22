@@ -1,0 +1,46 @@
+apiVersion: v1
+data:
+  mesh: |-
+    accessLogFile: /dev/stdout
+    accessLogEncoding: JSON
+    defaultConfig:
+      discoveryAddress: 192.168.0.2:15012
+      holdApplicationUntilProxyStarts: true
+      meshId: csm-93sass2d
+      proxyMetadata: 
+        # 必须开启智能 DNS
+        ISTIO_META_DNS_CAPTURE: "true"
+        ISTIO_META_DNS_AUTO_ALLOCATE: "true"
+      proxyStatsMatcher:
+        # 协议匹配
+        inclusionPrefixes:
+        - thrift
+        - dubbo
+        - kafka
+        - meta_protocol
+        inclusionRegexps:
+        - .*dubbo.*
+        - .*thrift.*
+        - .*kafka.*
+        - .*zookeeper.*
+        - .*meta_protocol.*
+      tracing:
+        sampling: 100
+        zipkin:
+          address: zipkin.istio-system-csm-93sass2d:9411
+    enablePrometheusMerge: true
+    rootNamespace: istio-system-csm-93sass2d
+    trustDomain: cluster.local
+  meshNetworks: 'networks: {}'
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2023-03-22T12:03:55Z"
+  labels:
+    install.operator.istio.io/owning-resource: unknown
+    istio.io/rev: default
+    operator.istio.io/component: Pilot
+    release: istio
+  name: istio
+  namespace: istio-system-csm-93sass2d
+  resourceVersion: "23615056"
+  uid: 23e10c97-8ca6-430f-9275-5b54bf2c2592

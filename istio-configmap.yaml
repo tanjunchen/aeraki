@@ -1,0 +1,43 @@
+apiVersion: v1
+data:
+  mesh: |-
+    accessLogFile: /dev/stdout
+    accessLogEncoding: JSON
+    defaultConfig:
+      discoveryAddress: istiod.istio-system.svc:15012
+      holdApplicationUntilProxyStarts: true
+      proxyMetadata:
+        # 必须开启智能 DNS
+        ISTIO_META_DNS_CAPTURE: "true"
+        ISTIO_META_DNS_AUTO_ALLOCATE: "true"
+      proxyStatsMatcher:
+        # 协议匹配
+        inclusionPrefixes:
+        - thrift
+        - dubbo
+        - kafka
+        - meta_protocol
+        inclusionRegexps:
+        - .*dubbo.*
+        - .*thrift.*
+        - .*kafka.*
+        - .*zookeeper.*
+        - .*meta_protocol.*
+      meshId: csm-x779o6tt
+      tracing:
+        sampling: 100
+        zipkin:
+          address: zipkin.istio-system:9411
+    enablePrometheusMerge: true
+    rootNamespace: istio-system
+    trustDomain: cluster.local
+  meshNetworks: 'networks: {}'
+kind: ConfigMap
+metadata:
+  labels:
+    install.operator.istio.io/owning-resource: unknown
+    istio.io/rev: default
+    operator.istio.io/component: Pilot
+    release: istio
+  name: istio
+  namespace: istio-system
