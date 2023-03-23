@@ -35,7 +35,7 @@ spec:
       serviceAccountName: aeraki
       containers:
         - name: aeraki
-          image: registry.baidubce.com/csm/aeraki:${AERAKI_TAG}
+          image: registry.baidubce.com/csm-offline/aeraki:${AERAKI_TAG}
           resources:
             requests:
               memory: "1Gi"
