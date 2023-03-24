@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Copyright Aeraki Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,25 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
----
-apiVersion: metaprotocol.aeraki.io/v1alpha1
-kind: MetaRouter
-metadata:
-  name: test-metaprotocol-dubbo-route
-spec:
-  hosts:
-    - org.apache.dubbo.samples.basic.api.demoservice
-  routes:
-    - name: v1
-      match:
-        attributes:
-          interface:
-            exact: org.apache.dubbo.samples.basic.api.DemoService
-          method:
-            exact: sayHello
-          foo:
-            exact: bar
-      route:
-        - destination:
-            host: org.apache.dubbo.samples.basic.api.demoservice
-            subset: v1
+set -e
+set -x
+
+if [ -z "$AERAKI_NAMESPACE" ]; then
+  export AERAKI_NAMESPACE="istio-system"
+fi
+
+kubectl --kubeconfig=/Users/chentanjun/.kube/all_kubeconfig/gz-offline.config delete -f k8s/aeraki.yaml || true
+kubectl --kubeconfig=/Users/chentanjun/.kube/all_kubeconfig/gz-offline.config delete -f k8s/crd.yaml || true

@@ -30,11 +30,14 @@ import (
 )
 
 // GenerateWebhookConfig creates ValidationWebhookConfiguration with the Aeraki ca
-func GenerateWebhookConfig(caCert *bytes.Buffer) error {
+func GenerateWebhookConfig(caCert *bytes.Buffer, namespace string) error {
+	webhookNamespace := constants.DefaultRootNamespace
+	if namespace != "" {
+		webhookNamespace = namespace
+	}
 	var (
-		webhookNamespace = constants.DefaultRootNamespace
-		webhookCfgName   = "aeraki-" + webhookNamespace
-		webhookService   = "aeraki"
+		webhookCfgName = "aeraki-" + webhookNamespace
+		webhookService = "aeraki"
 	)
 
 	kubeClient, err := kubernetes.NewForConfig(ctrl.GetConfigOrDie())

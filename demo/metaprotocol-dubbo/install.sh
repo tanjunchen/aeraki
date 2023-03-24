@@ -19,5 +19,4 @@ source $BASEDIR/../common_func.sh
 kubectl create ns meta-dubbo
 LabelIstioInjectLabel meta-dubbo
 kubectl apply -f $BASEDIR/dubbo-sample.yaml -n meta-dubbo
-kubectl apply -f $BASEDIR/serviceentry.yaml -n meta-dubbo
-kubectl apply -f $BASEDIR/destinationrule.yaml -n meta-dubbo
+kubectl apply -f $BASEDIR/aeraki-bootstrap-config.yaml -n meta-dubbo

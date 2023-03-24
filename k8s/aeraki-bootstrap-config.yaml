@@ -60,8 +60,8 @@ data:
                                "endpoint":{
                                   "address":{
                                      "socket_address":{
-                                        "address":"aeraki.istio-system",
-                                        "port_value":15010
+                                        "address":"192.168.0.11",
+                                        "port_value":15510
                                      }
                                   }
                                }

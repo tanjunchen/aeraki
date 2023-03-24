@@ -35,7 +35,7 @@ spec:
       serviceAccountName: aeraki
       containers:
         - name: aeraki
-          image: registry.baidubce.com/csm-offline/aeraki:${AERAKI_TAG}
+          image: ${DOCKER_REPO}/aeraki:${AERAKI_TAG}
           resources:
             requests:
               memory: "1Gi"
@@ -95,7 +95,7 @@ metadata:
 spec:
   ports:
     - name: grpc-xds
-      port: 15010
+      port: 15510
       protocol: TCP
       targetPort: 15010
     - name: https-validation
@@ -104,6 +104,7 @@ spec:
       targetPort: 15017
   selector:
     app: aeraki
+  type: LoadBalancer
 ---
 apiVersion: v1
 kind: ServiceAccount
