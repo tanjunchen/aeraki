@@ -14,16 +14,16 @@
 
 BASEDIR=$(dirname "$0")/..
 
+SCRIPTS_DIR=$BASEDIR/test/e2e/scripts
+COMMON_DIR=$BASEDIR/test/e2e/common
+
+bash ${SCRIPTS_DIR}/uninstall-addons.sh
+
+mkdir -p ~/.aeraki/istio
+envsubst < ${COMMON_DIR}/istio-config.yaml > ~/.aeraki/istio/istio-config.yaml
+bash ${SCRIPTS_DIR}/uninstall-istio.sh -y -f ~/.aeraki/istio/istio-config.yaml
+
 DEMO=$1
-
-kubectl delete -f https://raw.githubusercontent.com/istio/istio/release-1.14/samples/addons/prometheus.yaml
-kubectl delete -f https://raw.githubusercontent.com/istio/istio/release-1.14/samples/addons/grafana.yaml
-kubectl delete -f https://raw.githubusercontent.com/istio/istio/release-1.14/samples/addons/jeager.yaml
-
-kubectl delete -f $BASEDIR/demo/gateway/demo-ingress.yaml -n istio-system
-kubectl delete -f $BASEDIR/demo/gateway/istio-ingressgateway.yaml -n istio-system
-
-
 if [ "${DEMO}" == "default" ]
 then
     bash ${BASEDIR}/demo/metaprotocol-dubbo/uninstall.sh
@@ -35,5 +35,3 @@ elif [ "${DEMO}" == "kafka" ]
 then
     bash ${BASEDIR}/demo/kafka/uninstall.sh
 fi
-
-kubectl delete ns istio-system

@@ -18,7 +18,10 @@ source $BASEDIR/../common_func.sh
 kubectl create ns meta-brpc
 LabelIstioInjectLabel meta-brpc
 
+mkdir -p ~/.aeraki/demo
+envsubst < $BASEDIR/../../k8s/aeraki-bootstrap-config.yaml > ~/.aeraki/demo/aeraki-bootstrap-config.yaml
+kubectl apply -f ~/.aeraki/demo/aeraki-bootstrap-config.yaml -n meta-brpc
+
 kubectl apply -f $BASEDIR/brpc-protocol.yaml -n meta-brpc
-kubectl apply -f $BASEDIR/../../k8s/aeraki-bootstrap-config.yaml -n meta-brpc
 kubectl apply -f $BASEDIR/brpc-sample.yaml -n meta-brpc
 kubectl apply -f $BASEDIR/service.yaml -n meta-brpc

@@ -60,7 +60,7 @@ data:
                                "endpoint":{
                                   "address":{
                                      "socket_address":{
-                                        "address":"aeraki.istio-system",
+                                        "address":"aeraki.${ISTIO_NAMESPACE}",
                                         "port_value":15010
                                      }
                                   }

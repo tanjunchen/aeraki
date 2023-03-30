@@ -15,7 +15,6 @@
 BASEDIR=$(dirname "$0")
 source $BASEDIR/../common_func.sh
 
-
 kubectl create ns dubbo
 LabelIstioInjectLabel dubbo
 kubectl apply -f $BASEDIR/dubbo-sample.yaml -n dubbo

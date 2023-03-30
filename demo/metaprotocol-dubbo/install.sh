@@ -15,9 +15,13 @@
 BASEDIR=$(dirname "$0")
 source $BASEDIR/../common_func.sh
 
-
-kubectl create ns meta-dubbo
+kubectl create ns meta-dubbo || true
 LabelIstioInjectLabel meta-dubbo
+
+mkdir -p ~/.aeraki/demo
+envsubst < $BASEDIR/../../k8s/aeraki-bootstrap-config.yaml > ~/.aeraki/demo/aeraki-bootstrap-config.yaml
+kubectl apply -f ~/.aeraki/demo/aeraki-bootstrap-config.yaml -n meta-dubbo
+
 kubectl apply -f $BASEDIR/dubbo-sample.yaml -n meta-dubbo
 kubectl apply -f $BASEDIR/serviceentry.yaml -n meta-dubbo
 kubectl apply -f $BASEDIR/destinationrule.yaml -n meta-dubbo

@@ -18,6 +18,11 @@ source $BASEDIR/../common_func.sh
 
 kubectl create ns meta-thrift
 LabelIstioInjectLabel meta-thrift
+
+mkdir -p ~/.aeraki/demo
+envsubst < $BASEDIR/../../k8s/aeraki-bootstrap-config.yaml > ~/.aeraki/demo/aeraki-bootstrap-config.yaml
+kubectl apply -f ~/.aeraki/demo/aeraki-bootstrap-config.yaml -n meta-thrift
+
 kubectl apply -f $BASEDIR/thrift-sample.yaml -n meta-thrift
 kubectl apply -f $BASEDIR/destinationrule.yaml -n meta-thrift
 kubectl create cm rate-limit-config -n meta-thrift --from-file $BASEDIR/rate-limit-server/config.yaml

@@ -32,7 +32,7 @@ endif
 OUT?=./out
 DOCKER_TMP?=$(OUT)/docker_temp/
 DOCKER_TAG_E2E?=ghcr.io/aeraki-mesh/aeraki:`git log --format="%H" -n 1`
-DOCKER_TAG?=ghcr.io/aeraki-mesh/aeraki:$(IMAGE_TAG)
+DOCKER_TAG?=registry.baidubce.com/csm/aeraki:$(IMAGE_TAG)
 BINARY_NAME?=$(OUT)/aeraki
 BINARY_NAME_DARWIN?=$(BINARY_NAME)-darwin
 MAIN_PATH_CONSUL_MCP=./cmd/aeraki/main.go
@@ -61,15 +61,15 @@ test: style-check
 	$(GOMOD) tidy
 	$(GOTEST) -race  `go list ./... | grep -v e2e`
 build: test
-	CGO_ENABLED=0 GOOS=linux  $(GOBUILD) -o $(BINARY_NAME) $(MAIN_PATH_CONSUL_MCP)
+	CGO_ENABLED=0 GOARCH=amd64 GOOS=linux  $(GOBUILD) -o $(BINARY_NAME) $(MAIN_PATH_CONSUL_MCP)
 build-mac: test
-	CGO_ENABLED=0 GOOS=darwin  $(GOBUILD) -o $(BINARY_NAME_DARWIN) $(MAIN_PATH_CONSUL_MCP)
+	CGO_ENABLED=0 GOARCH=arm64 GOOS=darwin  $(GOBUILD) -o $(BINARY_NAME_DARWIN) $(MAIN_PATH_CONSUL_MCP)
 docker-build: build
 	rm -rf $(DOCKER_TMP)
 	mkdir $(DOCKER_TMP)
 	cp ./docker/Dockerfile $(DOCKER_TMP)
 	cp $(BINARY_NAME) $(DOCKER_TMP)
-	docker build -t $(DOCKER_TAG) $(DOCKER_TMP)
+	docker build --platform=linux/amd64 --no-cache -t $(DOCKER_TAG) $(DOCKER_TMP)
 	rm -rf $(DOCKER_TMP)
 docker-push: docker-build
 	docker push $(DOCKER_TAG)

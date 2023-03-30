@@ -35,6 +35,5 @@ if [ -z "$AERAKI_TAG" ]; then
 fi
 
 [ -n "$(istioctl version --remote=false |grep $ISTIO_VERSION)" ] || (curl -L https://istio.io/downloadIstio | ISTIO_VERSION=$ISTIO_VERSION  sh - && sudo mv $PWD/istio-$ISTIO_VERSION/bin/istioctl /usr/local/bin/)
-kubectl create ns ${ISTIO_NAMESPACE} || true
-istioctl install $@
-kubectl label namespace default istio-injection=enabled --overwrite=true
+istioctl uninstall $@
+kubectl delete ns ${ISTIO_NAMESPACE}
