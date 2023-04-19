@@ -21,4 +21,8 @@ const (
 	DefaultAerakiXdsPort = ":15010"
 	// DefaultAerakiXdsAddr is the default value for Aeraki xds address
 	DefaultAerakiXdsAddr = "aeraki.istio-system"
+	// DefaultAerakiEnableEnvoyFilterNsScopeName is the name for Aeraki to place envoyFilters scope
+	// False(Default): The generated envoyFilters will be placed under Istio root namespace
+	// True: The generated envoyFilters will be placed under the service namespace
+	DefaultAerakiEnableEnvoyFilterNsScopeName = "AERAKI_ENABLE_ENVOY_FILTER_NS_SCOPE"
 )

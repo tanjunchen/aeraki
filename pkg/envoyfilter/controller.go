@@ -131,9 +131,14 @@ func (c *Controller) pushEnvoyFilters2APIServer() error {
 		return fmt.Errorf("failed to generate EnvoyFilter: %v", err)
 	}
 
-	existingEnvoyFilters, _ := c.istioClientset.NetworkingV1alpha3().EnvoyFilters("").List(context.TODO(), v1.ListOptions{
-		LabelSelector: "manager=" + constants.AerakiFieldManager,
-	})
+	listNamespace := ""
+	if c.namespaceScoped {
+		listNamespace = c.namespace
+		controllerLog.Infof("listing EnvoyFilter from namespace=%s due to %s=true",
+			listNamespace, constants.DefaultAerakiEnableEnvoyFilterNsScopeName)
+	}
+	existingEnvoyFilters, _ := c.istioClientset.NetworkingV1alpha3().EnvoyFilters(listNamespace).List(context.TODO(),
+		v1.ListOptions{LabelSelector: "manager=" + constants.AerakiFieldManager})
 
 	// Deleted envoyFilters
 	for i := range existingEnvoyFilters.Items {
