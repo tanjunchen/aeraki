@@ -166,6 +166,10 @@ func (c *Controller) configInitialRequests() []*discovery.DiscoveryRequest {
 // RegisterEventHandler adds a handler to receive config update events for a configuration type
 func (c *Controller) RegisterEventHandler(handler func(*istioconfig.Config, *istioconfig.Config, istiomodel.Event)) {
 	handlerWrapper := func(prev istioconfig.Config, curr istioconfig.Config, event istiomodel.Event) {
+		if prev.Namespace != c.options.NameSpace || curr.Namespace != c.options.NameSpace {
+			controllerLog.Infof("ignore namespace %s %s event", curr.Namespace, curr.GroupVersionKind.String())
+			return
+		}
 		if event == istiomodel.EventUpdate && reflect.DeepEqual(prev.Spec, curr.Spec) {
 			return
 		}

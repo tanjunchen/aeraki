@@ -71,15 +71,31 @@ func AddDubboAuthorizationPolicyController(mgr manager.Manager, triggerPush func
 var (
 	dubboPredicates = predicate.Funcs{
 		CreateFunc: func(e event.CreateEvent) bool {
+			namespace := e.Object.GetNamespace()
+			if namespace != WatchNamespace {
+				dubboLog.Infof("ignore namespace [%s],expect [%s], %v", namespace, WatchNamespace, e.Object)
+				return false
+			}
 			return true
 		},
 		DeleteFunc: func(e event.DeleteEvent) bool {
+			namespace := e.Object.GetNamespace()
+			if namespace != WatchNamespace {
+				dubboLog.Infof("ignore namespace [%s],expect [%s], %v", namespace, WatchNamespace, e.Object)
+				return false
+			}
 			return true
 		},
 		UpdateFunc: func(e event.UpdateEvent) bool {
+			namespace := e.ObjectNew.GetNamespace()
+			if namespace != WatchNamespace {
+				dubboLog.Infof("ignore namespace [%s],expect [%s], %v", namespace, WatchNamespace, e.ObjectNew)
+				return false
+			}
 			switch old := e.ObjectOld.(type) {
 			case *v1alpha1.DubboAuthorizationPolicy:
 				new, ok := e.ObjectNew.(*v1alpha1.DubboAuthorizationPolicy)
+				// We could ignore event in here
 				if !ok {
 					return false
 				}

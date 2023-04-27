@@ -40,15 +40,31 @@ var metaProtocolLog = log.RegisterScope("meta-protocol-controller", "meta-protoc
 var (
 	metaProtocolPredicates = predicate.Funcs{
 		CreateFunc: func(e event.CreateEvent) bool {
+			namespace := e.Object.GetNamespace()
+			if namespace != WatchNamespace {
+				metaProtocolLog.Infof("ignore namespace [%s],expect [%s], %v", namespace, WatchNamespace, e.Object)
+				return false
+			}
 			return true
 		},
 		DeleteFunc: func(e event.DeleteEvent) bool {
+			namespace := e.Object.GetNamespace()
+			if namespace != WatchNamespace {
+				metaProtocolLog.Infof("ignore namespace [%s],expect [%s], %v", namespace, WatchNamespace, e.Object)
+				return false
+			}
 			return true
 		},
 		UpdateFunc: func(e event.UpdateEvent) bool {
+			namespace := e.ObjectNew.GetNamespace()
+			if namespace != WatchNamespace {
+				metaProtocolLog.Infof("ignore namespace [%s],expect [%s], %v", namespace, WatchNamespace, e.ObjectNew)
+				return false
+			}
 			switch old := e.ObjectOld.(type) {
 			case *v1alpha1.ApplicationProtocol:
 				new, ok := e.ObjectNew.(*v1alpha1.ApplicationProtocol)
+				// We could ignore event in here
 				if !ok {
 					return false
 				}

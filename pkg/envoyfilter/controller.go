@@ -196,8 +196,9 @@ func (c *Controller) toEnvoyFilterCRD(newEf *model.EnvoyFilterWrapper,
 
 func (c *Controller) generateEnvoyFilters() (map[string]*model.EnvoyFilterWrapper, error) {
 	envoyFilters := make(map[string]*model.EnvoyFilterWrapper)
+	// 只监听 istiod 所在的命名空间 se
 	serviceEntries, err := c.configStore.List(collections.IstioNetworkingV1Alpha3Serviceentries.Resource().
-		GroupVersionKind(), "")
+		GroupVersionKind(), c.namespace)
 	if err != nil {
 		return envoyFilters, fmt.Errorf("failed to listconfigs: %v", err)
 	}
@@ -253,7 +254,9 @@ func (c *Controller) generateEnvoyFilters() (map[string]*model.EnvoyFilterWrappe
 }
 
 func (c *Controller) generateGatewayEnvoyFilters(envoyFilters map[string]*model.EnvoyFilterWrapper) {
-	gateways, err := c.configStore.List(collections.IstioNetworkingV1Alpha3Gateways.Resource().GroupVersionKind(), "")
+	// 只监听 istiod 所在的命名空间 gateway
+	gateways, err := c.configStore.List(
+		collections.IstioNetworkingV1Alpha3Gateways.Resource().GroupVersionKind(), c.namespace)
 	if err != nil {
 		log.Errorf("failed to listconfigs: %v", err)
 	}
@@ -429,8 +432,9 @@ func envoyFilterMapKey(name, ns string) string {
 }
 
 func (c *Controller) findRelatedVirtualService(service *networking.ServiceEntry) (*model.VirtualServiceWrapper, error) {
+	// 只监听 istiod 所在的命名空间 vs
 	virtualServices, err := c.configStore.List(
-		collections.IstioNetworkingV1Alpha3Virtualservices.Resource().GroupVersionKind(), "")
+		collections.IstioNetworkingV1Alpha3Virtualservices.Resource().GroupVersionKind(), c.namespace)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list configs: %v", err)
 	}

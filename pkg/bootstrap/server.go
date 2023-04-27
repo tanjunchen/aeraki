@@ -86,6 +86,8 @@ type Server struct {
 
 // NewServer creates a new Server instance based on the provided arguments.
 func NewServer(args *AerakiArgs) (*Server, error) {
+	kube.WatchNamespace = args.RootNamespace
+	aerakiLog.Infof("WatchNamespace %s", kube.WatchNamespace)
 	kubeConfig, err := getConfigStoreKubeConfig(args)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get Istio kube config store : %v", err)
@@ -108,7 +110,7 @@ func NewServer(args *AerakiArgs) (*Server, error) {
 		envoyFilterController.ConfigUpdated(event)
 	})
 	// routeCacheMgr watches service entry and generate the routes for meta protocol services
-	routeCacheMgr := xds.NewCacheMgr(configController.Store)
+	routeCacheMgr := xds.NewCacheMgr(configController.Store, args.RootNamespace)
 	configController.RegisterEventHandler(func(prev *istioconfig.Config, curr *istioconfig.Config,
 		event model.Event) {
 		routeCacheMgr.ConfigUpdated(prev, curr, event)

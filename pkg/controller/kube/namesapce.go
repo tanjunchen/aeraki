@@ -47,6 +47,8 @@ var (
 	}
 )
 
+var WatchNamespace = ""
+
 // namespaceController creates bootstrap configMap for sidecar proxies
 type namespaceController struct {
 	controllerclient.Client

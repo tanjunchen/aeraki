@@ -63,14 +63,16 @@ type CacheMgr struct {
 	routeCache                 cachev3.SnapshotCache
 	// Sending on this channel results in a push.
 	pushChannel chan istiomodel.Event
+	namespace   string
 }
 
 // NewCacheMgr creates a new controller instance based on the provided arguments.
-func NewCacheMgr(store istiomodel.ConfigStore) *CacheMgr {
+func NewCacheMgr(store istiomodel.ConfigStore, namespace string) *CacheMgr {
 	controller := &CacheMgr{
 		configStore: store,
 		routeCache:  cachev3.NewSnapshotCache(false, cachev3.IDHash{}, logger{}),
 		pushChannel: make(chan istiomodel.Event, 100),
+		namespace:   namespace,
 	}
 	return controller
 }
@@ -125,8 +127,9 @@ func (c *CacheMgr) updateRouteCache() error {
 		return nil
 	}
 
+	// 只监听 istiod 所在的命名空间 se
 	serviceEntries, err := c.configStore.List(collections.IstioNetworkingV1Alpha3Serviceentries.Resource().
-		GroupVersionKind(), "")
+		GroupVersionKind(), c.namespace)
 	if err != nil {
 		return fmt.Errorf("failed to list service entries from the config store: %v", err)
 	}
@@ -346,8 +349,9 @@ func (c *CacheMgr) defaultRoute(service *networking.ServiceEntry, port *networki
 }
 
 func (c *CacheMgr) findRelatedServiceEntry(dr *model.DestinationRuleWrapper) (*model.ServiceEntryWrapper, error) {
+	// 只监听 istiod 所在的命名空间 se
 	serviceEntries, err := c.configStore.List(
-		collections.IstioNetworkingV1Alpha3Serviceentries.Resource().GroupVersionKind(), "")
+		collections.IstioNetworkingV1Alpha3Serviceentries.Resource().GroupVersionKind(), c.namespace)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list configs: %v", err)
 	}
@@ -390,8 +394,9 @@ func (c *CacheMgr) findRelatedMetaRouter(service *networking.ServiceEntry) (*met
 
 func (c *CacheMgr) findRelatedDestinationRule(service *model.ServiceEntryWrapper) (*model.DestinationRuleWrapper,
 	error) {
+	// 只监听 istiod 所在的命名空间 dr
 	drs, err := c.configStore.List(
-		collections.IstioNetworkingV1Alpha3Destinationrules.Resource().GroupVersionKind(), "")
+		collections.IstioNetworkingV1Alpha3Destinationrules.Resource().GroupVersionKind(), c.namespace)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list configs: %v", err)
 	}

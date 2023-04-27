@@ -18,9 +18,8 @@ import (
 	"context"
 	"reflect"
 
-	"sigs.k8s.io/controller-runtime/pkg/client"
-
 	"istio.io/pkg/log"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/event"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
@@ -38,15 +37,31 @@ var metaRouterLog = log.RegisterScope("meta-router-controller", "meta-routerl-co
 var (
 	metaRouterlPredicates = predicate.Funcs{
 		CreateFunc: func(e event.CreateEvent) bool {
+			namespace := e.Object.GetNamespace()
+			if namespace != WatchNamespace {
+				metaRouterLog.Infof("ignore namespace [%s],expect [%s], %v", namespace, WatchNamespace, e.Object)
+				return false
+			}
 			return true
 		},
 		DeleteFunc: func(e event.DeleteEvent) bool {
+			namespace := e.Object.GetNamespace()
+			if namespace != WatchNamespace {
+				metaRouterLog.Infof("ignore namespace [%s],expect [%s], %v", namespace, WatchNamespace, e.Object)
+				return false
+			}
 			return true
 		},
 		UpdateFunc: func(e event.UpdateEvent) bool {
+			namespace := e.ObjectNew.GetNamespace()
+			if namespace != WatchNamespace {
+				metaRouterLog.Infof("ignore namespace [%s],expect [%s], %v", namespace, WatchNamespace, e.ObjectNew)
+				return false
+			}
 			switch old := e.ObjectOld.(type) {
 			case *v1alpha1.MetaRouter:
 				new, ok := e.ObjectNew.(*v1alpha1.MetaRouter)
+				// We could ignore event in here
 				if !ok {
 					return false
 				}

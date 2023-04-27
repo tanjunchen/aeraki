@@ -43,15 +43,31 @@ var serviceEntryLog = log.RegisterScope("service-entry-controller", "service-ent
 var (
 	serviceEntryPredicates = predicate.Funcs{
 		CreateFunc: func(e event.CreateEvent) bool {
+			namespace := e.Object.GetNamespace()
+			if namespace != WatchNamespace {
+				serviceEntryLog.Infof("ignore namespace [%s],expect [%s], %v", namespace, WatchNamespace, e.Object)
+				return false
+			}
 			return true
 		},
 		DeleteFunc: func(e event.DeleteEvent) bool {
+			namespace := e.Object.GetNamespace()
+			if namespace != WatchNamespace {
+				serviceEntryLog.Infof("ignore namespace [%s],expect [%s], %v", namespace, WatchNamespace, e.Object)
+				return false
+			}
 			return true
 		},
 		UpdateFunc: func(e event.UpdateEvent) bool {
+			namespace := e.ObjectNew.GetNamespace()
+			if namespace != WatchNamespace {
+				serviceEntryLog.Infof("ignore namespace [%s],expect [%s], %v", namespace, WatchNamespace, e.ObjectNew)
+				return false
+			}
 			switch old := e.ObjectOld.(type) {
 			case *networking.ServiceEntry:
 				new, ok := e.ObjectNew.(*networking.ServiceEntry)
+				// We could ignore event in here
 				if !ok {
 					return false
 				}
